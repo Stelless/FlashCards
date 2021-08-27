@@ -1,8 +1,11 @@
 #include <iostream>
 #include <string>
+#include <map>
 
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include "Card.h"
+
 
 // https://www.boost.org/doc/libs/1_63_0/doc/html/property_tree/reference.html#header.boost.property_tree.json_parser_hpp
 // http://www.cochoy.fr/boost-property-tree/ 
@@ -16,8 +19,12 @@ namespace pt = boost::property_tree; // Short alias for this namespace
 std::string default_file_name{ "defaultcards.json" };
 
 // Purpose: Load the flash cards into memory
-void loadCards()
+void loadCards(map<std::string, Card>& deck)
 {
+   /*
+   Some reading on Boost Property Trees -  https://www.boost.org/doc/libs/1_41_0/doc/html/property_tree.html
+   */
+
    // Create a root
    pt::ptree root;
 
@@ -27,35 +34,45 @@ void loadCards()
    // Load each card
    for (pt::ptree::value_type& card : root.get_child("cards"))
    {
+      Card new_card{ }; // Uses default constructor
       cout << "==================================" << endl;
-      string id{ card.second.get<std::string>("id", "<no id>") };
-      dbgln(id);
+      std::string new_id{ card.second.get<std::string>("id", "<no id>") };
+      new_card.id = new_id;
+      //dbgln(new_card.get_id());
 
-      // Print out the lines of the question
+      // Print out the lines of the question (for each string variable in the JSON)
       for (pt::ptree::value_type& question_elem : card.second.get_child("question"))
       {
+         // FOR loop goes through each string in the array of strings (need to push each one on the vector)
          const auto& question_line{ question_elem.second.data() };
-         dbgln(question_line);
+         new_card.question.push_back(question_line);
+         //dbgln(new_card.question.back());
       }
 
-      // Print out the lines of the answer 
+      // Print out the lines of the answer (for each string variable in the JSON)
       for (pt::ptree::value_type& answer_elem : card.second.get_child("answer"))
       {
+         // FOR loop goes through each string in the array of strings (need to push each one on the vector)
          const auto& answer_line{ answer_elem.second.data() };
-         dbgln(answer_line);
+         new_card.answer.push_back(answer_line);
+         //dbgln(new_card.answer.back());
       }
-
+      //deck.emplace(new_id, new_card.question, new_card.answer);
       string answer{ card.second.get<std::string>("answer", "<no answer>") };
-      dbgln(answer);
+      //dbgln(answer);
+      new_card.print_card();
+      deck.insert(std::pair<std::string, Card>(new_id, new_card));
    }
 }
 
 // Purpose: Main
 int main()
 {
+
+   std::map<std::string, Card> deck;
    try
    {
-      loadCards();
+      loadCards(deck);
    }
 
    catch (const std::exception& e)
