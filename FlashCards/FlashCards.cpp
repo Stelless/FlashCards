@@ -17,11 +17,37 @@ namespace pt = boost::property_tree; // Short alias for this namespace
 #define dbgln(x) cout << #x << ": " << (x) << endl;
 #define dbg(x) cout << #x << ": " << (x) << "   ";
 
+//changed something
+
+
 std::string default_file_name{ "defaultcards.json" };
 
 // Purpose: Main
 int main()
 {
+   char user_input{};
+   do {
+      std::cout << "Hello! Please select an option: Q, F, H ";
+      cin >> user_input;
+      switch (user_input) {
+      case 'Q':
+      case 'q':
+         cout << "Main Menu\n";
+         break;
+      case 'F':
+      case 'f':
+         cout << "Load Flash Cards\n";
+         break;
+      case 'H':
+      case 'h':
+         cout << "Help Selected\n";
+
+      }
+   } while(user_input != 'q');
+
+
+
+
    Deck flash_card_deck{}; //YOU CANNOT DO THIS Deck flash_card_deck(); (this is an example of "c++'s most confusing parse")
    try
    {
