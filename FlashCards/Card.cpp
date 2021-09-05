@@ -1,41 +1,29 @@
 #include "Card.h"
 #define dbgln(x) std::cout << #x << ": " << (x) << std::endl;
 
-//Card::Card() {};
-//Card::Card(pt::ptree::value_type& card) {
-//   id = card.second.get<std::string>("id", "<no id>");
-//
-//   for (pt::ptree::value_type& question_elem : card.second.get_child("question"))
-//   {
-//      // FOR loop goes through each string in the array of strings (need to push each one on the vector)
-//      const auto& question_line{ question_elem.second.data() };
-//      question.push_back(question_line);
-//   }
-//
-//   // Print out the lines of the answer (for each string variable in the JSON)
-//   for (pt::ptree::value_type& answer_elem : card.second.get_child("answer"))
-//   {
-//      // FOR loop goes through each string in the array of strings (need to push each one on the vector)
-//      const auto& answer_line{ answer_elem.second.data() };
-//      answer.push_back(answer_line);
-//   }
-//   return;
-//}
-void const Card::print_card() {
-
-   std::cout << "\n-----------\n";
-   std::cout << "ID: ";
-   dbgln(id);
-
+void const Card::print_id() {
+   std::cout << "ID: " + id + "\n";
+}
+void const Card::print_question() {
    std::cout << "Question: ";
    for (const auto& ques : question) {
-      dbgln(ques);
+      std::cout << ques + ' ';
    }
-
+   std::cout << "\n";
+}
+void const Card::print_ans() {
    std::cout << "Answer: ";
    for (const auto& ans : answer) {
-      dbgln(ans);
+      std::cout << ans + ' ';
    }
+   std::cout << "\n";
+}
+void const Card::print_card() {
+
+   std::cout << "\n--------------------------------------------------------------------------\n";
+   print_id();
+   print_question();
+   print_ans();
 }
 Card Card::load_card(pt::ptree::value_type& card) {
    //maybe turn this into an overloaded constructor so we can just create the cards instead

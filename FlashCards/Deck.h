@@ -14,5 +14,6 @@ public:
 
    void load_deck(std::string deck_file_name); //bool indicates if it successfully loaded deck
    void print_deck();
+   bool empty();
 };
 

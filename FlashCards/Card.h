@@ -14,6 +14,9 @@ struct Card {
 
    //Card(pt::ptree::value_type& card);
    //Card();
+   void const print_id();
+   void const print_question();
+   void const print_ans();
    void const print_card();
    Card load_card(pt::ptree::value_type& card);
 };

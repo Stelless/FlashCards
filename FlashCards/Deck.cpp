@@ -25,3 +25,7 @@ void Deck::print_deck() {
       card.second->print_card();
    }
 }
+
+bool Deck::empty() {
+   return deck.empty();
+}
