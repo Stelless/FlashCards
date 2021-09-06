@@ -1,4 +1,5 @@
 #include <iostream>
+#include <conio.h>
 #include <string>
 #include <map>
 #include <stdlib.h>
@@ -47,7 +48,7 @@ int main()
 
    while (!(user_input == 'q' || user_input == 'Q')) {
       print_option_menu();
-      cin >> user_input;
+      user_input = _getch();
       switch (user_input) {
 
       case 'X':
@@ -81,7 +82,7 @@ int main()
    }
 }
 void print_option_menu() {
-   cout << "Hello! Please select an option:" << endl;
+   cout << "\nHello! Please select an option:" << endl;
    cout << "X:      Start Flash Card Excersizes" << endl;
    cout << "C:      Print All Flash Cards in Current Deck" << endl;
    cout << "F:      Load Different Flash Card Deck " << endl;
@@ -91,18 +92,32 @@ void print_option_menu() {
 }
 void cycle_current_deck(Deck flash_card_deck) {
    system("CLS");
+   Deck hold_deck{};
    char user_input{};
+   static int num_correct{ 0 };
+   static int card_num{ 0 };
+   std::cin.ignore(256, '\n');
    for (const auto& card : flash_card_deck.deck) {
-      std::cout << "Please indicate if your provided answer to the question was Correct or Not:" << std::endl;
-      std::cout << "Press 0 if Correct, 1 if Incorrect\n\n\n" << std::endl;
-      cin.get() >> user_input; // this is getting ignored??
+      std::cout << "After viewing the answer please indicate if you would like to remove the question from the queue or hold it for later viewing:" << std::endl;
+      std::cout << "Card: " << card_num << " out of: " << flash_card_deck.size() << " cards." << endl;
       card.second->print_id();
       card.second->print_question();
 
-      cin.get() >> user_input;
+      cin.get(user_input);
       card.second->print_ans();
-      cin.get() >> user_input;
+      std::cout << "Press 0 if you would like to hold this question until the end. Pressing enter will remove it from the deck and show the next card" << std::endl;
+      user_input = _getch();
+
+
+      if (user_input == '0') {
+         ++num_correct;
+         hold_deck.addCard(*card.second);
+      };
+      ++card_num;
       system("CLS");
    }
+   cout << "Final report. You answered : " << num_correct << " Questions correct." << " You answered: " << flash_card_deck.size() - num_correct << " Questions incorrectly." << endl;
+   cout << "Questions Held- Starting Cycle: " << endl;
+   if (hold_deck.size() != 0) { cycle_current_deck(hold_deck); }//recursive function call
    cout << "Exiting cycle_current_deck" << endl;
 }

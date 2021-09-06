@@ -20,6 +20,11 @@ void Deck::load_deck(std::string deck_file_name) {
    std::cout << "=================Finished Loading Deck=================\n";
 }
 
+void Deck::addCard(const Card& new_card) {
+   std::shared_ptr<Card> new_card_ptr = std::make_shared<Card>(new_card);
+   deck.insert(std::pair<std::string, std::shared_ptr<Card>>(new_card_ptr->id, new_card_ptr));
+}
+
 void Deck::print_deck() {
    for (auto& card : deck) {
       card.second->print_card();
@@ -28,4 +33,8 @@ void Deck::print_deck() {
 
 bool Deck::empty() {
    return deck.empty();
+}
+
+int Deck::size() {
+   return deck.size();
 }

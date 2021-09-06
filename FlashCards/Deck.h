@@ -13,7 +13,9 @@ public:
    std::map<std::string, std::shared_ptr<Card>> deck; // Use make_shared<> to allocate memory
 
    void load_deck(std::string deck_file_name); //bool indicates if it successfully loaded deck
+   void addCard(const Card& new_card);
    void print_deck();
    bool empty();
+   int size();
 };
 
