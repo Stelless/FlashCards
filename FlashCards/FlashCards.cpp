@@ -92,32 +92,75 @@ void print_option_menu() {
 }
 void cycle_current_deck(Deck flash_card_deck) {
    system("CLS");
+   struct exercise_state {
+      bool ex_is_active{ false };
+      char user_input{};
+      int num_cards_held{ 0 };
+      int current_card_num{ 0 };
+
+      void print_instructions() { std::cout << "After viewing the id & question please press enter to view the answer." << std::endl; }
+      void print_ex_progress(std::map<std::string, std::shared_ptr<Card>> deck, std::map<std::string, std::shared_ptr<Card>> hold_deck) { std::cout << "Card: " << current_card_num << " out of: " << deck.size() << " cards." << " There are " << hold_deck.size() << " cards in the hold deck." << std::endl; }
+      //void print_key_option_menu() {q=='exit exercise', 0=="hold card and move to next", "enter"="move to next" } // maybe implement?
+      void print_hold_instructions() { std::cout << "Press '0' if you would like to hold this question to be reviewed at the end otherwise press 'enter' to remove it from the deck and show the next card." << std::endl; }
+      void print_beg_hold_message() { std::cout << "Beginning hold deck cycle." << std::endl; }
+      void print_hold_ex_progress(int current_index, std::map<std::string, std::shared_ptr<Card>> hold_deck) { cout << "Card: " << current_index << " out of: " << hold_deck.size() << " cards." << endl; }
+      void print_final_report(std::map<std::string, std::shared_ptr<Card>> deck) { cout << "--- Final report. You reviewed : " << deck.size() << " questions." << " You held: " << num_cards_held << " questions to be reviwed again.\n" << endl; }
+      void print_continue_message() { cout << "Press enter to continue" << endl; }
+   };
+
+   exercise_state e_state;
    Deck hold_deck{};
-   char user_input{};
-   static int num_correct{ 0 };
-   static int card_num{ 0 };
-   std::cin.ignore(256, '\n');
+   std::cin.ignore(256, '\n'); // clears the cin.get() cache? I have no idea -.- @@@@@@@@@@
+
    for (const auto& card : flash_card_deck.deck) {
-      std::cout << "After viewing the answer please indicate if you would like to remove the question from the queue or hold it for later viewing:" << std::endl;
-      std::cout << "Card: " << card_num << " out of: " << flash_card_deck.size() << " cards." << endl;
+      e_state.ex_is_active = true; // do something with this
+      ++e_state.current_card_num;
+      e_state.print_instructions();
+      e_state.print_ex_progress(flash_card_deck.deck, hold_deck.deck);
+      std::cout << "\n----------------------------------------------------------------" << std::endl;
       card.second->print_id();
       card.second->print_question();
+      cin.get(); // This will 'pause' the exercise and allow time to answer the question.
 
-      cin.get(user_input);
+
       card.second->print_ans();
-      std::cout << "Press 0 if you would like to hold this question until the end. Pressing enter will remove it from the deck and show the next card" << std::endl;
-      user_input = _getch();
+      std::cout << "----------------------------------------------------------------\n" << endl;
+      e_state.print_hold_instructions();
+      e_state.user_input = _getch(); // 'pause' the exercise and wait for user input
 
 
-      if (user_input == '0') {
-         ++num_correct;
+      if (e_state.user_input == '0') {
          hold_deck.addCard(*card.second);
-      };
-      ++card_num;
+         ++e_state.num_cards_held;
+      }
       system("CLS");
    }
-   cout << "Final report. You answered : " << num_correct << " Questions correct." << " You answered: " << flash_card_deck.size() - num_correct << " Questions incorrectly." << endl;
-   cout << "Questions Held- Starting Cycle: " << endl;
-   if (hold_deck.size() != 0) { cycle_current_deck(hold_deck); }//recursive function call
-   cout << "Exiting cycle_current_deck" << endl;
+   e_state.print_final_report(flash_card_deck.deck);
+   e_state.print_beg_hold_message();
+   cin.get();
+
+   //start hold loop here? -simplified version with no hold
+   int card_index{0};
+
+   for (const auto& card : hold_deck.deck) {
+      ++card_index;
+      e_state.print_instructions();
+      e_state.print_hold_ex_progress(card_index, hold_deck.deck);
+
+      std::cout << "\n----------------------------------------------------------------" << std::endl;
+      card.second->print_id();
+      card.second->print_question();
+      cin.get(); // This will 'pause' the exercise and allow time to answer the question.
+
+
+      card.second->print_ans();
+      std::cout << "----------------------------------------------------------------\n" << endl;
+      e_state.print_continue_message();
+      cin.get();
+      system("CLS");
+   }
+
+   cout << "Exiting cycle_current_deck, press enter to continue........." << endl;
+   cin.get(); // 'pauses' before returniung to the main menu
+
 }
